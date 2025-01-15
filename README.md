@@ -1,7 +1,8 @@
 # json-dup-keys
 
-CLI tool to detect duplicate keys in JSON files. Uses tree-sitter to parse JSON as text and checks that in AST trees.
-Doesn't attempt to deserialize the whole JSON into some structure in memory, so it's reasonably fast for larger files.
+A CLI tool for detecting duplicate keys in JSON files. It uses tree-sitter to parse JSON as text and inspects the
+resulting AST (Abstract Syntax Tree) to identify duplicates. It doesn't deserialize the entire JSON into an in-memory
+structure, so it's reasonably fast for larger files.
 
 ## Installation
 
