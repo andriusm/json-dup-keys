@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 	ts_json "github.com/tree-sitter/tree-sitter-json/bindings/go"
@@ -30,7 +31,7 @@ func findDuplicates(content []byte) []string {
 
 				if keys[keyText] != nil {
 					line := fmt.Sprintf("%v\n  line %v\n  line %v",
-						keyText,
+						cleanPath(keyText),
 						keyNode.StartPosition().Row+1,
 						keys[keyText].StartPosition().Row+1)
 					duplicates = append(duplicates, line)
@@ -43,6 +44,7 @@ func findDuplicates(content []byte) []string {
 		for i := uint(0); i < n.ChildCount(); i++ {
 			traverse(n.Child(i))
 		}
+
 	}
 
 	traverse(node)
@@ -50,10 +52,23 @@ func findDuplicates(content []byte) []string {
 	return duplicates
 }
 
+func cleanPath(path string) string {
+	brackets := regexp.MustCompile(`\[.*?\]`)
+	path = brackets.ReplaceAllString(path, "")
+
+	dots := regexp.MustCompile(`\.{2,}`)
+	path = dots.ReplaceAllString(path, ".")
+
+	return path
+}
+
 func fullNodePath(n *ts.Node, content []byte) string {
 	path := ""
 	for n != nil {
 		if n.Kind() != "pair" {
+			if path != "" {
+				path = fmt.Sprintf("[pair_%v].%v", n.Id(), path)
+			}
 			n = n.Parent()
 			continue
 		}

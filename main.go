@@ -12,6 +12,7 @@ func main() {
 	}
 
 	filePath := os.Args[1]
+
 	content, err := os.ReadFile(filePath)
 	if err != nil {
 		fmt.Printf("Failed to read file: %v\n", err)
