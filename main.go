@@ -24,7 +24,7 @@ func main() {
 	if len(duplicateKeys) > 0 {
 		fmt.Println("Duplicate keys detected:")
 		for _, key := range duplicateKeys {
-			fmt.Printf("- %s\n", key)
+			fmt.Printf("  %s\n", key)
 		}
 		os.Exit(1)
 	}
