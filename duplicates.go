@@ -3,46 +3,39 @@ package main
 import (
 	"fmt"
 
-	tree_sitter "github.com/tree-sitter/go-tree-sitter"
-	tree_sitter_json "github.com/tree-sitter/tree-sitter-json/bindings/go"
+	ts "github.com/tree-sitter/go-tree-sitter"
+	ts_json "github.com/tree-sitter/tree-sitter-json/bindings/go"
 )
 
 func findDuplicates(content []byte) []string {
-	parser := tree_sitter.NewParser()
+	parser := ts.NewParser()
 	defer parser.Close()
-	parser.SetLanguage(tree_sitter.NewLanguage(tree_sitter_json.Language()))
+	parser.SetLanguage(ts.NewLanguage(ts_json.Language()))
 
 	tree := parser.Parse(content, nil)
 	node := tree.RootNode()
 
-	keys := make(map[string]bool)
+	keys := make(map[string]*ts.Node)
 	duplicates := []string{}
 
-	var traverse func(*tree_sitter.Node)
-	traverse = func(n *tree_sitter.Node) {
-		keyText := ""
+	var traverse func(*ts.Node)
+	traverse = func(n *ts.Node) {
 		if n.Kind() == "pair" {
 			valueNode := n.ChildByFieldName("value")
+
 			if valueNode.Kind() != "array" {
 				keyNode := n.ChildByFieldName("key")
-				if keyNode != nil {
-					node := keyNode
-					for node.Parent() != nil {
-						if node.Parent().Kind() == "pair" {
-							if node.Parent().ChildByFieldName("value").Kind() != "array" {
-								start, stop := node.Parent().ChildByFieldName("key").NamedChild(0).ByteRange()
-								keyText = string(content[start:stop]) + "." + keyText
-							}
-						}
-						node = node.Parent()
-					}
 
-					if keys[keyText] {
-						line := fmt.Sprintf("%v: %v", keyNode.StartPosition().Row, keyText)
-						duplicates = append(duplicates, line)
-					} else {
-						keys[keyText] = true
-					}
+				keyText := fullNodePath(keyNode, content)
+
+				if keys[keyText] != nil {
+					line := fmt.Sprintf("%v\n  line %v\n  line %v",
+						keyText,
+						keyNode.StartPosition().Row+1,
+						keys[keyText].StartPosition().Row+1)
+					duplicates = append(duplicates, line)
+				} else {
+					keys[keyText] = keyNode
 				}
 			}
 		}
@@ -55,4 +48,26 @@ func findDuplicates(content []byte) []string {
 	traverse(node)
 
 	return duplicates
+}
+
+func fullNodePath(n *ts.Node, content []byte) string {
+	path := ""
+	for n != nil {
+		if n.Kind() != "pair" {
+			n = n.Parent()
+			continue
+		}
+
+		if path != "" {
+			path = "." + path
+		}
+
+		start, stop := n.ChildByFieldName("key").NamedChild(0).ByteRange()
+		keyText := string(content[start:stop])
+
+		path = keyText + path
+		n = n.Parent()
+	}
+
+	return path
 }
