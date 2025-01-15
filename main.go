@@ -38,7 +38,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("No duplicate keys detected.")
+	fmt.Println("No duplicate keys detected!")
 }
 
 func findDuplicateKeys(node *tree_sitter.Node, content []byte) []string {
