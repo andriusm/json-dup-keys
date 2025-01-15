@@ -30,11 +30,11 @@ func findDuplicates(content []byte) []string {
 				keyText := fullNodePath(keyNode, content)
 
 				if keys[keyText] != nil {
-					line := fmt.Sprintf("%v\n  line %v\n  line %v",
+					duplicate := fmt.Sprintf("  [%v]\n    line %v\n    line %v",
 						cleanPath(keyText),
 						keyNode.StartPosition().Row+1,
 						keys[keyText].StartPosition().Row+1)
-					duplicates = append(duplicates, line)
+					duplicates = append(duplicates, duplicate)
 				} else {
 					keys[keyText] = keyNode
 				}

@@ -19,16 +19,15 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Checking %s for duplicate keys\n", filePath)
 	duplicateKeys := findDuplicates(content)
 
 	if len(duplicateKeys) > 0 {
-		fmt.Println("Duplicate keys detected:")
+		fmt.Printf("Duplicate keys found in file %s:\n", filePath)
+
 		for _, key := range duplicateKeys {
 			fmt.Printf("%s\n", key)
 		}
+
 		os.Exit(1)
 	}
-
-	fmt.Println("No duplicate keys detected!")
 }
