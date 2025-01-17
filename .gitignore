@@ -1,2 +1,4 @@
 *.out
 json-dup-keys
+coverage/
+coverage.out

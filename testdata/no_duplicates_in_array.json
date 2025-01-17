@@ -1,0 +1,18 @@
+{
+  "book": {
+    "chapters": [
+      {
+        "title": "chapter1",
+        "text": [
+          "paragraph1"
+        ]
+      },
+      {
+        "title": "chapter2",
+        "text": [
+          "paragraph1"
+        ]
+      }
+    ]
+  }
+}

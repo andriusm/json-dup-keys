@@ -1,0 +1,27 @@
+{
+  "book": {
+    "part": {
+      "chapter1": {
+        "attributes": [
+          "attr1",
+          "attr2"
+        ],
+        "text": "text1"
+      },
+      "chapter2": {
+        "attributes": [
+          "attr3",
+          "attr2"
+        ],
+        "text": "text2"
+      },
+      "chapter1": {
+        "attributes": [
+          "attr4",
+          "attr5"
+        ],
+        "text": "text3"
+      }
+    }
+  }
+}
